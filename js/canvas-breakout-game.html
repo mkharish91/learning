@@ -69,28 +69,42 @@
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
     var ballRadius = 10;
-    var x = canvas.width/2;
-    var y = canvas.height-30;
-    var dx = 4;
-    var dy = -4;
-    var paddleHeight = 10;
-    var paddleWidth = 75;
-    var paddleX = (canvas.width-paddleWidth)/2;
-    var rightPressed = false;
-    var leftPressed = false;
     var brickColumnCount = 8;
     var brickRowCount = 5;
     var brickWidth = 59;
     var brickHeight = 20;
     var brickPadding = 1;
-    var score = 0;
-    var lives = 3;
-
     var bricks = [];
-    for(var c=0; c<brickRowCount; c++) {
-        bricks[c] = [];
-        for(var r=0; r<brickColumnCount; r++) {
-            bricks[c][r] = { x: 0, y: 0, status: 1 };
+    var x,
+        y,
+        dx,
+        dy,
+        paddleHeight,
+        paddleWidth,
+        paddleX,
+        rightPressed,
+        leftPressed,
+        score,
+        lives;
+
+    function resetGame() {
+        x = canvas.width/2;
+        y = canvas.height-30;
+        dx = 4;
+        dy = -4;
+        paddleHeight = 10;
+        paddleWidth = 75;
+        paddleX = (canvas.width-paddleWidth)/2;
+        rightPressed = false;
+        leftPressed = false;
+        score = 0;
+        lives = 3;
+
+        for(var c=0; c<brickRowCount; c++) {
+            bricks[c] = [];
+            for(var r=0; r<brickColumnCount; r++) {
+                bricks[c][r] = { x: 0, y: 0, status: 1 };
+            }
         }
     }
 
@@ -129,10 +143,6 @@
                         dy = -dy;
                         b.status = 0;
                         score++;
-                        if(score == brickColumnCount*brickRowCount) {
-                            alert("YOU WIN, CONGRATS!");
-                            // document.location.reload();
-                        }
                     }
                 }
             }
@@ -186,6 +196,12 @@
         drawPaddle();
         updateScore();
         updateLives();
+        if (score == brickColumnCount*brickRowCount) {
+            // If there are no bricks left, then the game is won
+            alert("YOU WIN, CONGRATS!");
+            return;
+        }
+
         if (! startGame) {
             // Only setup the UI do not start the game.
             return;
@@ -233,8 +249,13 @@
     }
 
     document.getElementById('start-game')
-            .addEventListener('click', draw);
+            .addEventListener('click', () => {
+                resetGame();
+                draw();
+            });
 
+    // On load show the game layout
+    resetGame();
     draw(false);
 </script>
 
